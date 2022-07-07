@@ -38,7 +38,7 @@ void print_mina(int lin, int col, struct campo campo_minado[lin][col]){
         printf("\n");
     }
     //essa função ira imprimir o campo minado para o usuario
-    //ainda sera mudada as condições do if adcionando caso tenha marcações, bombas, ou numero o
+    //ainda sera mudada as condições do if adcionando caso tenha marcações, bombas, ou numero
 }
 
 int main(){
