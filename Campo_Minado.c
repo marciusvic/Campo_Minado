@@ -55,7 +55,6 @@ void gerar_casas_numeros(int lin, int col, struct campo campo_minado[lin][col]){
                         }
                     }
                 }
-                //campo_minado[i][j].numero--;
             }
         }
     }
@@ -71,7 +70,7 @@ void print_mina(int lin, int col, struct campo campo_minado[lin][col]){
     for(int i = 0; i < lin; i++){
         printf("%02d ", i+1);
         for(int j = 0; j < col; j++){
-            if(campo_minado[i][j].revelado == 0 /* campo_minado[i][j].bomba == 0*/){
+            if(campo_minado[i][j].revelado == 0){
                 printf("* ");
             }
             /*if(campo_minado[i][j].bomba == 1){
