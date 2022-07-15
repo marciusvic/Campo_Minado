@@ -131,24 +131,3 @@ int main(){
     return 0;
 }
 
-/* Remeleixos do Hikinho:          data: (14/07/22)  hora: (12:00 - xx:xx)
-
-  -  "// {Alteração} (x)" será o indicador de que alí houve uma alteração, seguido de seu número, para facilitar a verificação dos detalhes.
-
- (1)    {Alteração}  ->  Substituí o for por um while pra ficar mais intuitívo.     (linha 47)
-
-
- ~ N O V I D A D E S:
-
- (1)    {new}  ->  reformulei e complementei a função de formatar o campo.     (linha 66)
-
- -=+{DETALHES}+=-
- - Nova formatação para o campo
- - implementação do caso número.
- - implementação da recursividade. (em stand-by)(falta fazer a função recursiva)
- - implementação da exibição de todas as bombas do campo, caso o usuário perca. (em stand-by) (falta armazenar as posições das bombas)
-
-
- (2)    {new}  ->  reformulei a função que define os números do campo. tinha problemas na função original     (linha 55) 
-
-*/
