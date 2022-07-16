@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
-
 
 struct campo{
     int bomba;
@@ -67,37 +65,37 @@ void gera_numeros(int lin, int col, struct campo campo_minado[lin][col]){
     }
 }
 
+
 void formata_campo(int lin, int col, struct campo campo_minado[lin][col]){
     char c = 'a';
     char caractere = '+';
-    printf("     ");
+    printf("       ");
     for(int i = 0; i < col; i++){
-        printf ("%c     ", c++);
+        printf ("%c   ", c++);
     }
-    printf("\n");
+    printf("\n\n");
     for(int i = 0; i < lin; i++){
-        printf("%.2d ", i+1);
+        printf("%.2d   |", i+1);
         for(int j = 0; j < col; j++){
             if(campo_minado[i][j].revelado == 0){
-                caractere = '+';
-                printf("| %c | ", caractere);
+                caractere = '#';
+                printf(" %c |", caractere);
             }// printar casas nao reveladas
             else if(campo_minado[i][j].revelado == 1 && campo_minado[i][j].numero == 0 && campo_minado[i][j].bomba == 0){
                 caractere = ' ';
-                printf("| %c | ", caractere);
+                printf(" %c |", caractere);
                 // CHAMAR A FUNÇÃO RECURSIVA AQUI.
             }//printar casar vazias
             else if(campo_minado[i][j].revelado == 1 && campo_minado[i][j].bomba == 0 && campo_minado[i][j].numero > 0){
-                printf("| %d | ", campo_minado[i][j].numero);
+                printf(" %d |", campo_minado[i][j].numero);
             }//printar numeros
             else if(campo_minado[i][j].bomba == 1){
-                // EXIBIR A LOCALIZAÇÃO DE TODAS AS BOMBAS DO CAMPO, E FINALIZAR O JOGO.
+            
             }
         }
         printf("\n");
     }
 } // ordem de jogada: primeiro linha, depois coluna. Ex: 1 B / 7 R / 10 N.
-
 
 
 int main(){
@@ -108,6 +106,7 @@ int main(){
     criar_campo(lin, col, campo_minado);
     gera_numeros(lin, col, campo_minado);
     int opcao = 0;
+    int jogar_linha = -1, jogar_coluna = -1; // essas variaveis sao para escolher a jogada revelar, o valor é -1 pois nao tem chance de ser uma casa com uma bomba ex: 0, 0
     printf("Seja Bem-vindo ao Campo Minado\n");
     while(opcao != 2){
         printf("Digite o número das opções a seguir:\n");
@@ -115,24 +114,42 @@ int main(){
         printf("2.Começar o Jogo\n");
         scanf("%d", &opcao);
         if(opcao == 1){
-            printf("Tutorial: O campo do jogo iniciará com todas as casas estando não-reveladas, você deve revelar alguma casa, e acontecerá isso:\nse a posição escolhida for vazia, debloqueará em cascata várias posições vazias\nse a posição escolhida for um número n, isso significa que em volta daquela casa haverá n bombas\nse a opsição escolhida for uma bomba, você perde o jogo."); //turorial do jogo aqui
-        }
+            printf("\nTutorial: O campo do jogo iniciará com todas as casas estando não-reveladas, você deve revelar alguma casa, e acontecerá isso:\nse a posição escolhida for vazia, debloqueará em cascata várias posições vazias\nse a posição escolhida for um número n, isso significa que em volta daquela casa haverá n bombas\nse a posição escolhida for uma bomba, você perde o jogo.\n\n"); //turorial do jogo aqui
+            //perguntar se deseja ver o jogo jogando sozinho
+            //colocar delay de 0.8s a cada [formata_campo(lin, col, campo_minado)]
+        }  
     }
+
     opcao = 0;
-    int jogar_linha = -1, jogar_coluna = -1; // essas variaveis sao para escolher a jogada revelar, o valor é -1 pois nao tem chance de ser uma casa com uma bomba ex: 0, 0
+    time_t start = time(NULL);
+    time_t end;
+    long tempo = 0;
     while(campo_minado[jogar_linha][jogar_coluna].bomba != 1){
-        printf("O que você deseja fazer?\n");
+        formata_campo(lin, col, campo_minado);
+        printf("\nO que você deseja fazer?\n");
         printf("1.Revelar\n");
         printf("2.Pedir Ajuda\n");
         printf("3.Ver o tempo de jogo\n");
         scanf("%d", &opcao);
         if(opcao == 1){
-            printf("Entre respectivamente com um Número e uma Letra(minúscula)");
+            printf("\nEntre respectivamente com um Número e uma Letra(minúscula)\n");
             scanf("%d %c", &jogar_linha, &jogar_coluna);
             jogar_linha = jogar_linha - 1; // -1 pois a matriz começa a contar sua linha em 0
             jogar_coluna = jogar_coluna - 97; // - 97 pois é o valor da diferença entre caracters minusculos e inteiros na tabela asc;
         }
+        if(opcao == 3){
+            while(opcao == 3){
+                end = time(NULL);
+                tempo = end - start;
+                printf("\nTEMPO DE JOGO: %lds\n\n", tempo);
+                printf("O que você deseja fazer?\n");
+                printf("1.Revelar\n");
+                printf("2.Pedir Ajuda\n");
+                printf("3.Ver o tempo de jogo\n");
+                scanf("%d", &opcao);
+            }
+        }
     }
-    
+    //revelar, dica(aquela) e bot
     return 0;
 }
