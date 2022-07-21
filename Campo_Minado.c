@@ -44,7 +44,9 @@ void criar_campo(int lin, int col, campo campo_minado[lin][col]){
     while(verifica_quantidade_de_bombas(lin, col, campo_minado) != 1){
         lin_bomb = rand()%10; // gera numero aleatorio de 0 a 9
         col_bomb = rand()%20;// gera numero aleatorio de 0 a 19
-        campo_minado[lin_bomb][col_bomb].bomba = 1;
+        if(lin_bomb != 0 && col_bomb!= 0){
+            campo_minado[lin_bomb][col_bomb].bomba = 1;
+        }
     }
 } // função que reseta o campo minado e define as posições das bombas.
 
@@ -95,6 +97,7 @@ void formata_campo(int lin, int col, campo campo_minado[lin][col]){
         }
         printf("\n");
     }
+    printf("\n");
 } // ordem de jogada: primeiro linha, depois coluna. Ex: b1 / r7 / n10.
 
 
@@ -152,66 +155,86 @@ int vitoria(int lin, int col, campo campo_minado[lin][col]){
 }
 
 
-void dica(int lin, int col, campo campo_minado[lin][col]){
-    int conta_revelado = 0;
-    int dica1 = 0;
-    int dica_lin = 0;
-    int dica_col = 0;
+void dica(int lin, int col, campo campo_minado[lin][col], int verifica){
+    int contador = 0;  // Servem pra contar e pra verificar :D
+    int bolean = 0;
+    char aux;
     for(int i = 0; i < lin; i++){
         for(int j = 0; j < col; j++){
-            if(campo_minado[i][j].revelado == 0){
-                conta_revelado++;
+            if(campo_minado[i][j].revelado == 1 && campo_minado[i][j].numero == verifica){
+                for(int k = -1; k < 2; k++){
+                    for(int n = -1; n < 2; n++){
+                        if(campo_minado[i+k][j+n].revelado == 0){
+                            contador++;
+                        }
+                    }
+                }
+            }
+            if(contador - verifica > 1){
+                bolean = 1;
+                aux = j + '0';
+                aux = aux + 49;
+                printf("\nEscolher uma das casas ao redor de %c%d seria uma boa jogada.\n\n", aux, (i + 1));
+                return;
+            }
+            else if(contador - verifica > 2){
+                bolean = 1;
+                aux = j + '0';
+                aux = aux + 49;
+                printf("\nEscolher uma das casas ao redor de %c%d seria uma boa jogada.\n\n", aux, (i + 1));
+                return;
             }
         }
     }
-    if(conta_revelado == 200 && dica1 == 0){
-        dica_lin = 0; // posicao vet[0] sempre será uma linha;
-        dica_col = 0; // posicao vet[1] sempre será uma coluna;
-        dica1 = 1;
-        printf("\n%c%d seria uma boa jogada\n", dica_col+97, dica_lin+1);
+    if(bolean == 0){
+        dica(lin, col, campo_minado, verifica+1);
     }
-    else{
-        int numero_revelado = 1; // inicial do que ele procurar primeiro
-        int conta_oculto = 0; // contar quantas casas nao reveladas tem ao redor do numero_revelado
-        int casas_maximas = 8; //  o maximo de casas nao reveladas possiveis ao redor do numero_revelado
-        for(numero_revelado = 1; numero_revelado < 6; numero_revelado++){
-            for(casas_maximas = 8; casas_maximas > conta_oculto; casas_maximas--){
-                for(int i = 0; i < lin; i++){
-                    for(int j = 0; j < col; j++){
-                        if(campo_minado[i][j].revelado == 1 && campo_minado[i][j].numero > 0){
-                            if(campo_minado[i][j].numero == numero_revelado){ //  se for igual ao inicial
+}
+
+
+void bot(int lin, int col, campo campo_minado[lin][col], int *lin_bot, int *col_bot){
+    int numero_revelado = 1; // inicial do que ele procurar primeiro
+    int conta_oculto = 0; // contar quantas casas nao reveladas tem ao redor do numero_revelado
+    int casas_maximas = 8; //  o maximo de casas nao reveladas possiveis ao redor do numero_revelado
+    int aux = 0;
+    for(numero_revelado = 1; numero_revelado < 6; numero_revelado++){
+        for(casas_maximas = 8; casas_maximas > (numero_revelado + 1); casas_maximas--){
+            for(int i = 0; i < lin; i++){
+                for(int j = 0; j < col; j++){
+                    if(campo_minado[i][j].revelado == 1 && campo_minado[i][j].numero > 0){
+                        if(campo_minado[i][j].numero == numero_revelado){ //  se for igual ao inicial
+                            for(int k = -1; k < 2; k++){
+                                for(int m = -1; m < 2; m++){ // passar ao redor
+                                    if(((i+k) >= 0 && (j+m) >= 0) && ((i+k) < lin && (j+m) < col)){
+                                        if(campo_minado[i+k][j+m].revelado == 0){ // contando quantas casas nao reveladas tem ao redor do numero_revelado (inicial)
+                                            conta_oculto++;
+                                        }
+                                    }
+                                }
+                            }
+                            if(conta_oculto == casas_maximas){
                                 for(int k = -1; k < 2; k++){
-                                    for(int m = -1; m < 2; m++){ // passar ao redor
+                                    for(int m = -1; m < 2; m++){
                                         if(((i+k) >= 0 && (j+m) >= 0) && ((i+k) < lin && (j+m) < col)){
-                                            if(campo_minado[i+k][j+m].revelado == 0){ // contando quantas casas nao reveladas tem ao redor do numero_revelado (inicial)
-                                                conta_oculto++;
-                                            }
-                                        }
-                                    }
-                                }
-                                if(conta_oculto == casas_maximas){
-                                    for(int k = -1; k < 2; k++){
-                                        for(int m = -1; m < 2; m++){
-                                            if(((i+k) >= 0 && (j+m) >= 0) && ((i+k) < lin && (j+m) < col)){
-                                                if(campo_minado[i+k][j+m].revelado == 0){
-                                                    // colocar aqui valores para retornar linha i+k e coluna j+m
-                                                    dica_lin = i+k; // posicao vet[0] sempre será uma linha;
-                                                    dica_col = j+m; // posicao vet[1] sempre será uma coluna;
+                                            if(campo_minado[i+k][j+m].revelado == 0 && (i+k) != i && (j+m) != j && (i+k) != 0 && (j+m) != 0){
+                                                if(aux != 1){
+                                                *lin_bot = i+k;
+                                                *col_bot = j+m;
                                                 }
+                                                aux = 1;
                                             }
                                         }
                                     }
                                 }
-                                else{
-                                    conta_revelado = 0;
-                                }
+                            }
+                            else{
+                                conta_oculto = 0;
                             }
                         }
                     }
                 }
             }
         }
-        printf("\n%c%d seria uma boa jogada\n", dica_col+97, dica_lin+1);
     }
 }
 
@@ -223,9 +246,11 @@ int main(){
     criar_campo(lin, col, campo_minado);
     gera_numeros(lin, col, campo_minado);
     int opcao = 0;
+    int verifica = 1;
     int jogar_linha = -1; // essas variaveis sao para escolher a jogada revelar. o valor é -1 pois nao tem chance de ser uma casa com uma bomba ex: 0, 0
     int jogar_coluna = -1;
     char jogar_coluna_char;
+    int lin_bot, col_bot;
     // Em "jogar_coluna_char", o "_char" foi colocado porquê será necessário convertê-lo para int depois.
     printf("Seja Bem-vindo ao Campo Minado!\n\n");
     while(opcao != 2){
@@ -240,11 +265,31 @@ int main(){
             printf("3 - Ver uma demonstração\n");
             scanf("%d", &opcao);
             if(opcao == 3){
-                // Chamar a função que executa a I.A
-                //colocar delay de 0.8s a cada [formata_campo(lin, col, campo_minado)] que a I.A printar
-
-                printf("\nAgora que você viu uma demonstração, "); 
-                // Esse print roda após a execução da I.A, que fará com que o while repita, e pergunte a opção mais uma vez.
+                int confere_inicio = 0;
+                int verifica_vitoria_bot = 0; 
+                int verifica_derrota_bot = 0;
+                while(verifica_vitoria_bot == 0 && verifica_derrota_bot == 0){
+                    verifica_vitoria_bot = vitoria(lin, col, campo_minado);
+                    if(confere_inicio >= 1){
+                        bot(lin, col, campo_minado, &lin_bot, &col_bot);
+                    }
+                    else{
+                        lin_bot = 0;
+                        col_bot = 0;
+                    }
+                    if(campo_minado[lin_bot][col_bot].bomba == 0){
+                        revelar(lin_bot, col_bot, lin, col, campo_minado);
+                    }
+                    else{
+                        revelar(lin_bot, col_bot, lin, col, campo_minado);
+                        verifica_derrota_bot = 1;
+                    }
+                    formata_campo(lin, col, campo_minado);
+                    confere_inicio++;
+                }
+                
+                printf("\nEssa foi a demonstração do campo minado!\n\n");
+                main();
             }
         }  
     }
@@ -295,7 +340,7 @@ int main(){
                 }
             }
             if(opcao == 2){
-                dica(lin, col, campo_minado);
+                dica(lin, col, campo_minado, verificador);
             }
             if(opcao == 3){
                 while(opcao == 3){
